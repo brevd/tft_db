@@ -11,21 +11,23 @@ CREATE TABLE "participants" (
 );
 
 CREATE TABLE "traits" (
-  "trait_id" varchar(50) PRIMARY KEY,
+  "tid" serial PRIMARY KEY,
+  "trait_id" varchar(50),
   "trait_name" varchar(30),
   "descrip" text
 );
 
 CREATE TABLE "units" (
-  "char_id" varchar(50) PRIMARY KEY,
+  "cid" serial PRIMARY KEY,
+  "char_id" varchar(50),
   "cname" varchar,
   "cost" int
 );
 
 CREATE TABLE "unit_traits" (
-  "char_id" varchar(50) REFERENCES units ON DELETE NO ACTION,
-  "trait_id" varchar(50) REFERENCES traits ON DELETE NO ACTION,
-  PRIMARY KEY ("char_id", "trait_id")
+  "cid" int REFERENCES units ON DELETE NO ACTION,
+  "tid" int REFERENCES traits ON DELETE NO ACTION,
+  PRIMARY KEY ("cid", "tid")
 );
 
 CREATE TABLE "match_participant" (
@@ -44,7 +46,7 @@ CREATE TABLE "match_participant" (
 CREATE TABLE "team_traits" (
   "match_id" varchar(30) REFERENCES matches ON DELETE NO ACTION,
   "puuid" varchar(100) REFERENCES participants ON DELETE NO ACTION,
-  "trait_id" varchar REFERENCES traits ON DELETE NO ACTION,
+  "tid" int REFERENCES traits ON DELETE NO ACTION,
   "num_units" int, 
   "teir_current" int,
   "teir_total" int, 
@@ -55,19 +57,21 @@ CREATE TABLE "team_traits" (
 CREATE TABLE "team_units" (
   "match_id" varchar(30) REFERENCES matches ON DELETE NO ACTION,
   "puuid" varchar(100) REFERENCES participants ON DELETE NO ACTION,
-  "char_id" varchar REFERENCES units ON DELETE NO ACTION,
+  "cid" int REFERENCES units ON DELETE NO ACTION,
   "teir" int,
   PRIMARY KEY ("match_id", "puuid", "char_id")
 );
 
 CREATE TABLE "items" (
-  "item_id" int PRIMARY KEY,
+  "iid" serial PRIMARY KEY,
+  "item_id" int,
   "iname" varchar(50),
   "descrip" text
 );
 
 CREATE TABLE "augments" (
-  "augment_id" varchar PRIMARY KEY,
+  "aid" serial PRIMARY KEY,
+  "augment_id" varchar,
   "aname" varchar(50),
   "descrip" text
 );
@@ -75,8 +79,8 @@ CREATE TABLE "augments" (
 CREATE TABLE "team_units_items" (
   "match_id" varchar,
   "participant_id" varchar,
-  "char_id" varchar,
-  "item_id" int REFERENCES items ON DELETE NO ACTION,
-  PRIMARY KEY ("match_id", "participant_id", "char_id", "item_id")
+  "cid" int REFERENCES units ON DELETE NO ACTION,
+  "iid" int REFERENCES items ON DELETE NO ACTION,
+  PRIMARY KEY ("match_id", "participant_id", "cid", "iid")
 );
 
